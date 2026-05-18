@@ -13,11 +13,8 @@ collections:
     slug: "{{slug}}"
     fields:
       - {label: "Title", name: "title", widget: "string"}
-      - {label: "Author", name: "author", widget: "string", default: "Captain Tella"}
+      - {label: "Author", name: "author", widget: "string"}
       - {label: "Date", name: "date", widget: "datetime"}
-      - label: "Category"
-        name: "category"
-        widget: "select"
-        options: ["Music", "Skits", "TikTok", "Creator Economy", "Industry", "Afrobeats"]
+      - {label: "Category", name: "category", widget: "string"}
       - {label: "Excerpt", name: "excerpt", widget: "text"}
       - {label: "Body", name: "body", widget: "markdown"}
