@@ -1,12 +1,649 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Creator Chronicle — Admin</title>
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Creator Chronicle — Publisher</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --gold: #C8A84B;
+    --bg: #0C0B09;
+    --bg2: #111009;
+    --ink: #F2E8D0;
+    --ink2: #B8A882;
+    --ink3: #7A6E52;
+    --ink4: #4A4232;
+    --rule: rgba(200,168,75,0.2);
+  }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* LOGIN */
+  .login-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .login-box {
+    background: var(--bg2);
+    border: 1px solid var(--rule);
+    padding: 48px;
+    width: 400px;
+  }
+  .login-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .login-sub {
+    font-size: 13px;
+    color: var(--ink3);
+    margin-bottom: 36px;
+  }
+  .form-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    margin-bottom: 8px;
+  }
+  .form-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    padding: 12px 16px;
+    outline: none;
+    margin-bottom: 20px;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus { border-color: var(--gold); }
+  .btn-gold {
+    width: 100%;
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    cursor: pointer;
+    font-family: 'Barlow', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 14px;
+    transition: opacity 0.2s;
+  }
+  .btn-gold:hover { opacity: 0.85; }
+  .login-error {
+    background: rgba(200,50,50,0.15);
+    border: 1px solid rgba(200,50,50,0.3);
+    color: #ff8080;
+    font-size: 13px;
+    padding: 10px 14px;
+    margin-bottom: 20px;
+    display: none;
+  }
+
+  /* DASHBOARD */
+  .dashboard { display: none; }
+  nav {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--rule);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    color: var(--gold);
+  }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .nav-user {
+    font-size: 12px;
+    color: var(--ink3);
+  }
+  .btn-sm {
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--ink3);
+    font-family: 'Barlow', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 7px 16px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .btn-sm:hover { color: var(--gold); border-color: var(--gold); }
+
+  .main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 40px;
+  }
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .page-sub {
+    font-size: 14px;
+    color: var(--ink3);
+    margin-bottom: 40px;
+  }
+
+  .editor-card {
+    background: var(--bg2);
+    border: 1px solid var(--rule);
+    padding: 36px;
+    margin-bottom: 32px;
+  }
+  .editor-section-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .form-group { margin-bottom: 20px; }
+  .form-textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    padding: 12px 16px;
+    outline: none;
+    resize: vertical;
+    min-height: 80px;
+    transition: border-color 0.2s;
+    line-height: 1.6;
+  }
+  .form-textarea:focus { border-color: var(--gold); }
+  .form-select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    padding: 12px 16px;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    margin-bottom: 20px;
+  }
+  .form-select:focus { border-color: var(--gold); }
+
+  .body-editor {
+    min-height: 360px;
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .toolbar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .toolbar-btn {
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    color: var(--ink3);
+    font-family: 'Barlow', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .toolbar-btn:hover { color: var(--gold); border-color: var(--gold); }
+
+  .output-section {
+    background: var(--bg2);
+    border: 1px solid var(--rule);
+    padding: 36px;
+  }
+  .output-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .output-box {
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    padding: 20px;
+    font-family: monospace;
+    font-size: 12px;
+    color: var(--ink3);
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .output-instructions {
+    font-size: 13px;
+    color: var(--ink3);
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+  .output-instructions strong { color: var(--ink); }
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .btn-generate {
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    cursor: pointer;
+    font-family: 'Barlow', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 12px 28px;
+    transition: opacity 0.2s;
+  }
+  .btn-generate:hover { opacity: 0.85; }
+  .btn-copy {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    cursor: pointer;
+    font-family: 'Barlow', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 12px 28px;
+    transition: background 0.2s;
+    display: none;
+  }
+  .btn-copy:hover { background: rgba(200,168,75,0.1); }
+  .success-msg {
+    display: none;
+    background: rgba(50,200,100,0.1);
+    border: 1px solid rgba(50,200,100,0.3);
+    color: #80ffaa;
+    font-size: 13px;
+    padding: 12px 16px;
+    margin-top: 16px;
+  }
+
+  .char-count {
+    font-size: 11px;
+    color: var(--ink4);
+    text-align: right;
+    margin-top: 4px;
+  }
+</style>
 </head>
 <body>
-  <script src="https://cdn.jsdelivr.net/npm/decap-cms@3.1.2/dist/decap-cms.js"></script>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginPage">
+  <div class="login-box">
+    <div class="login-logo">The Creator Chronicle</div>
+    <div class="login-sub">Publisher Dashboard — Sign in to continue</div>
+    <div class="login-error" id="loginError">Incorrect password. Please try again.</div>
+    <label class="form-label">Password</label>
+    <input type="password" class="form-input" id="passwordInput" placeholder="Enter your publisher password" onkeydown="if(event.key==='Enter') login()">
+    <button class="btn-gold" onclick="login()">Sign In</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+  <nav>
+    <div class="nav-logo">The Creator Chronicle</div>
+    <div class="nav-right">
+      <span class="nav-user">Publisher Dashboard</span>
+      <button class="btn-sm" onclick="logout()">Sign Out</button>
+    </div>
+  </nav>
+
+  <div class="main">
+    <h1 class="page-title">New Blog Post</h1>
+    <p class="page-sub">Write your article below, generate the HTML file, then upload it to GitHub.</p>
+
+    <div class="editor-card">
+      <div class="editor-section-title">Article Details</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Article Title *</label>
+          <input type="text" class="form-input" id="postTitle" placeholder="e.g. How Afrobeats Conquered the World" style="margin-bottom:0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Author Name *</label>
+          <input type="text" class="form-input" id="postAuthor" placeholder="e.g. Captain Tella" style="margin-bottom:0" value="Captain Tella">
+        </div>
+      </div>
+      <div class="form-row" style="margin-top:20px">
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select" id="postCategory" style="margin-bottom:0">
+            <option>Music</option>
+            <option>Skits</option>
+            <option>TikTok</option>
+            <option selected>Creator Economy</option>
+            <option>Industry</option>
+            <option>Afrobeats</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Publish Date</label>
+          <input type="date" class="form-input" id="postDate" style="margin-bottom:0">
+        </div>
+      </div>
+      <div style="margin-top:20px">
+        <label class="form-label">Short Excerpt (shown on homepage) *</label>
+        <textarea class="form-textarea" id="postExcerpt" placeholder="A one or two sentence summary of the article..." rows="2" oninput="updateCount(this,'excerptCount')"></textarea>
+        <div class="char-count" id="excerptCount">0 characters</div>
+      </div>
+    </div>
+
+    <div class="editor-card">
+      <div class="editor-section-title">Article Body</div>
+      <div class="toolbar">
+        <button class="toolbar-btn" onclick="formatText('bold')"><b>B</b></button>
+        <button class="toolbar-btn" onclick="formatText('italic')"><i>I</i></button>
+        <button class="toolbar-btn" onclick="insertHeading()">H2</button>
+        <button class="toolbar-btn" onclick="insertQuote()">Quote</button>
+        <button class="toolbar-btn" onclick="insertParagraph()">¶ Para</button>
+      </div>
+      <textarea class="form-textarea body-editor" id="postBody" placeholder="Write your full article here...
+
+Start each paragraph on a new line.
+Use [QUOTE] before a line to make it a pull quote.
+Use [H2] before a line to make it a subheading.
+
+Example:
+This is a normal paragraph of text.
+
+[H2] Why Collaboration Matters
+
+Another paragraph here.
+
+[QUOTE] The strongest wave is made of many drops." oninput="updateCount(this,'bodyCount')"></textarea>
+      <div class="char-count" id="bodyCount">0 characters</div>
+    </div>
+
+    <div class="output-section">
+      <div class="output-label">Generate & Publish</div>
+      <p class="output-instructions">
+        When you are ready, click <strong>Generate HTML</strong> below. Copy the code and follow these steps:<br><br>
+        <strong>1.</strong> Click "Generate HTML" → Click "Copy Code"<br>
+        <strong>2.</strong> Go to <strong>github.com</strong> → your <strong>creator-chronicle</strong> repo<br>
+        <strong>3.</strong> Click <strong>Add file → Create new file</strong><br>
+        <strong>4.</strong> Name the file: <strong>posts/your-article-title.html</strong><br>
+        <strong>5.</strong> Paste the code → Click <strong>Commit changes</strong><br>
+        <strong>6.</strong> Your article is live on the site in ~30 seconds! ✓
+      </p>
+      <div class="output-box" id="outputBox"></div>
+      <div class="btn-row">
+        <button class="btn-generate" onclick="generatePost()">Generate HTML</button>
+        <button class="btn-copy" id="copyBtn" onclick="copyCode()">Copy Code</button>
+      </div>
+      <div class="success-msg" id="successMsg">✓ Code copied! Now paste it into GitHub.</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Set today's date
+  document.getElementById('postDate').valueAsDate = new Date();
+
+  // Simple password protection
+  const PASSWORD = 'chronicle2026';
+
+  function login() {
+    const pwd = document.getElementById('passwordInput').value;
+    if (pwd === PASSWORD) {
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      localStorage.setItem('cc_auth', '1');
+    } else {
+      document.getElementById('loginError').style.display = 'block';
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem('cc_auth');
+    document.getElementById('loginPage').style.display = 'flex';
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('passwordInput').value = '';
+  }
+
+  // Auto-login if already authenticated
+  if (localStorage.getItem('cc_auth') === '1') {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+  }
+
+  function updateCount(el, id) {
+    document.getElementById(id).textContent = el.value.length + ' characters';
+  }
+
+  function formatText(cmd) {
+    const ta = document.getElementById('postBody');
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    const selected = ta.value.substring(start, end);
+    let wrapped = selected;
+    if (cmd === 'bold') wrapped = '**' + selected + '**';
+    if (cmd === 'italic') wrapped = '_' + selected + '_';
+    ta.value = ta.value.substring(0, start) + wrapped + ta.value.substring(end);
+    updateCount(ta, 'bodyCount');
+  }
+
+  function insertHeading() {
+    const ta = document.getElementById('postBody');
+    const pos = ta.selectionStart;
+    const insert = '\n[H2] Your Heading Here\n';
+    ta.value = ta.value.substring(0, pos) + insert + ta.value.substring(pos);
+    updateCount(ta, 'bodyCount');
+  }
+
+  function insertQuote() {
+    const ta = document.getElementById('postBody');
+    const pos = ta.selectionStart;
+    const insert = '\n[QUOTE] Your pull quote goes here.\n— Author Name\n';
+    ta.value = ta.value.substring(0, pos) + insert + ta.value.substring(pos);
+    updateCount(ta, 'bodyCount');
+  }
+
+  function insertParagraph() {
+    const ta = document.getElementById('postBody');
+    const pos = ta.selectionStart;
+    ta.value = ta.value.substring(0, pos) + '\n\n' + ta.value.substring(pos);
+    updateCount(ta, 'bodyCount');
+  }
+
+  function parseBody(raw) {
+    const lines = raw.split('\n');
+    let html = '';
+    let isFirst = true;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+
+      if (line.startsWith('[H2]')) {
+        html += `<h2 class="article-h2">${line.replace('[H2]', '').trim()}</h2>\n`;
+      } else if (line.startsWith('[QUOTE]')) {
+        const quoteText = line.replace('[QUOTE]', '').trim();
+        const nextLine = lines[i+1] ? lines[i+1].trim() : '';
+        const cite = nextLine.startsWith('—') ? nextLine : '';
+        if (cite) i++;
+        html += `<blockquote>\n  <p>${quoteText}</p>\n  ${cite ? `<cite>${cite}</cite>` : ''}\n</blockquote>\n`;
+      } else {
+        const pClass = isFirst ? ' class="first-p"' : '';
+        html += `<p${pClass}>${line}</p>\n`;
+        isFirst = false;
+      }
+    }
+    return html;
+  }
+
+  function slugify(text) {
+    return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  }
+
+  function generatePost() {
+    const title = document.getElementById('postTitle').value.trim();
+    const author = document.getElementById('postAuthor').value.trim();
+    const category = document.getElementById('postCategory').value;
+    const date = document.getElementById('postDate').value;
+    const excerpt = document.getElementById('postExcerpt').value.trim();
+    const body = document.getElementById('postBody').value.trim();
+
+    if (!title || !excerpt || !body) {
+      alert('Please fill in the Title, Excerpt, and Article Body before generating.');
+      return;
+    }
+
+    const dateObj = new Date(date);
+    const formatted = dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    const bodyHtml = parseBody(body);
+    const readTime = Math.ceil(body.split(' ').length / 200);
+
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${title} — The Creator Chronicle</title>
+<meta name="description" content="${excerpt}">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/main.css">
+<link rel="stylesheet" href="../assets/css/article.css">
+</head>
+<body>
+<div class="grain"></div>
+<nav>
+  <ul class="nav-links">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../index.html#music">Music</a></li>
+    <li><a href="../index.html#skits">Skits</a></li>
+    <li><a href="../index.html#creators">Creators</a></li>
+  </ul>
+  <a class="nav-logo" href="../index.html">The Creator Chronicle</a>
+  <span class="nav-issue">May 2026 · Issue 12</span>
+</nav>
+<div class="article-wrap">
+  <main class="article-main">
+    <div class="article-tag-row">
+      <span class="tag-pill">${category}</span>
+      <span class="read-time">${readTime} min read</span>
+    </div>
+    <h1 class="article-title">${title}</h1>
+    <p class="article-deck">${excerpt}</p>
+    <div class="byline-row">
+      <div class="avatar">${author.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()}</div>
+      <div>
+        <div class="byline-name">${author}</div>
+        <div class="byline-meta">The Creator Chronicle · ${formatted}</div>
+      </div>
+    </div>
+    <div class="article-rule"></div>
+    <div class="article-body">
+${bodyHtml}
+    </div>
+  </main>
+  <aside class="article-sidebar">
+    <div class="sidebar-label">Also on The Chronicle</div>
+    <div class="sidebar-card">
+      <div class="sidebar-cat">Creator Economy</div>
+      <div class="sidebar-title">Together We Rise: Why Nigerian Creators Must Collaborate to Dominate</div>
+      <div class="sidebar-date"><a href="together-we-rise.html" style="color:var(--gold);text-decoration:none;">Read article →</a></div>
+    </div>
+  </aside>
+</div>
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-logo">The Creator Chronicle</div>
+        <p class="footer-desc">Nigeria's premier publication for music, skits, TikTok and the creator economy.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 The Creator Chronicle · Lagos, Nigeria</span>
+    </div>
+  </div>
+</footer>
+<style>
+  .article-h2 { font-family:'Playfair Display',serif; font-size:26px; font-weight:700; color:var(--ink); margin:40px 0 16px; line-height:1.3; }
+  .first-p::first-letter { font-family:'Playfair Display',serif; font-size:72px; font-weight:900; color:var(--gold); float:left; line-height:0.78; margin:8px 12px -4px 0; }
+</style>
+</body>
+</html>`;
+
+    document.getElementById('outputBox').textContent = html;
+    document.getElementById('outputBox').style.display = 'block';
+    document.getElementById('copyBtn').style.display = 'inline-block';
+    window._generatedHtml = html;
+
+    // Scroll to output
+    document.getElementById('outputBox').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function copyCode() {
+    navigator.clipboard.writeText(window._generatedHtml).then(() => {
+      document.getElementById('successMsg').style.display = 'block';
+      setTimeout(() => document.getElementById('successMsg').style.display = 'none', 4000);
+    }).catch(() => {
+      // Fallback
+      const ta = document.createElement('textarea');
+      ta.value = window._generatedHtml;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      document.getElementById('successMsg').style.display = 'block';
+      setTimeout(() => document.getElementById('successMsg').style.display = 'none', 4000);
+    });
+  }
+</script>
 </body>
 </html>
